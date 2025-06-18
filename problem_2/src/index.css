@@ -1,1 +1,189 @@
 @import "tailwindcss";
+
+body {
+  background-color: #000;
+}
+
+.container {
+  @apply fixed -translate-x-2/4 -translate-y-2/4 left-2/4 top-2/4;
+}
+
+.ant-input:hover {
+  border-color: transparent !important; /* replace with your desired border color */
+}
+
+.ant-input:focus {
+  border-color: transparent !important; /* replace with your desired border color */
+  box-shadow: none !important;
+}
+
+.ant-input::placeholder {
+  color: #ffffff61; /* or any color you like */
+  opacity: 1; /* override default opacity */
+}
+
+.ant-btn:hover {
+  border-color: transparent !important;
+  box-shadow: rgba(255, 255, 255, 0.04) 0px 0px 10px !important;
+  @apply !text-white !border !bg-[rgb(19,19,19)] !rounded-[999999px] !border-solid border-[rgb(57,57,57)];
+}
+
+.ant-btn {
+  box-shadow: rgba(255, 255, 255, 0.04) 0px 0px 10px !important;
+  height: 3rem;
+  width: 8rem;
+  @apply !text-white !border !bg-[rgb(19,19,19)] !rounded-[999999px] !border-solid border-[rgb(57,57,57)];
+}
+
+.input-container {
+  @apply !py-5 flex items-stretch basis-auto box-border relative min-h-0 min-w-0 shrink-0 flex-col overflow-hidden bg-[rgb(19,19,19)] border pb-1 rounded-[20px] border-solid border-[rgba(255,255,255,0.12)] h-[9rem];
+}
+
+.swap-btn {
+  display: flex;
+  align-items: stretch;
+  flex-basis: auto;
+  box-sizing: border-box;
+  position: relative;
+  min-height: 0px;
+  min-width: 0px;
+  flex-shrink: 0;
+  flex-direction: column;
+  cursor: pointer;
+  outline-color: rgba(0, 0, 0, 0) !important;
+  background-color: rgb(31, 31, 31) !important;
+  border-color: rgb(19, 19, 19) !important;
+  border-radius: 16px !important;
+  border-width: 4px !important;
+  padding: 8px !important;
+  border-style: solid !important;
+  transform: scale(1) !important;
+  opacity: 1 !important;
+  width: 50px !important;
+
+  position: absolute;
+  top: calc(1.7 / 4 * 100%) !important;
+  left: calc(2 / 4 * 100%) !important;
+  --tw-translate-x: calc(calc(2 / 4 * 100%) * -1) !important;
+  translate: var(--tw-translate-x) var(--tw-translate-y) !important;
+  --tw-translate-y: calc(calc(2 / 4 * 100%) * -1) !important;
+  translate: var(--tw-translate-x) var(--tw-translate-y) !important;
+}
+
+.swap-btn:hover {
+  display: flex;
+  align-items: stretch;
+  flex-basis: auto;
+  box-sizing: border-box;
+  position: relative;
+  min-height: 0px;
+  min-width: 0px;
+  flex-shrink: 0;
+  flex-direction: column;
+  cursor: pointer;
+  outline-color: rgba(0, 0, 0, 0) !important;
+  background-color: rgba(31, 31, 31, 0.8) !important;
+  border-color: rgb(19, 19, 19) !important;
+  border-radius: 16px !important;
+  border-width: 4px !important;
+  padding: 8px !important;
+  border-style: solid !important;
+  transform: scale(1) !important;
+  opacity: 1 !important;
+  width: 50px !important;
+
+  position: absolute;
+  top: calc(1.7 / 4 * 100%) !important;
+  left: calc(2 / 4 * 100%) !important;
+  --tw-translate-x: calc(calc(2 / 4 * 100%) * -1) !important;
+  translate: var(--tw-translate-x) var(--tw-translate-y) !important;
+  --tw-translate-y: calc(calc(2 / 4 * 100%) * -1) !important;
+  translate: var(--tw-translate-x) var(--tw-translate-y) !important;
+}
+
+.submit-btn {
+  display: flex !important;
+  flex: 1 1 0px !important;
+  box-sizing: border-box !important;
+  position: relative !important;
+  min-height: 0px !important;
+  min-width: 0px !important;
+  flex-direction: row !important;
+  container-type: normal !important;
+  border-width: 1px !important;
+  align-items: center;
+  justify-content: center;
+  border-color: transparent;
+  cursor: pointer !important;
+  height: auto !important;
+  align-self: stretch !important;
+  background-color: rgba(255, 55, 199, 0.08) !important;
+  padding: 16px 20px !important;
+  border-radius: 20px !important;
+  gap: 12px !important;
+  border-style: solid !important;
+  transform: scale(1) !important;
+  outline-color: rgba(0, 0, 0, 0) !important;
+  color: #ff37c7 !important;
+  width: 100% !important;
+  font-size: 1.6rem !important;
+}
+
+.auto-complete {
+  width: 100%;
+  display: flex;
+  flex: 1 1 auto;
+  box-sizing: border-box;
+  position: relative;
+  min-width: 0px;
+  flex-direction: row;
+  align-items: center;
+  background-color: rgb(31, 31, 31);
+  border-radius: 999999px;
+  gap: 8px;
+  min-height: 48px;
+  margin: 4px 0px;
+  padding: 0px 16px;
+}
+
+.ant-select-selector {
+  background: rgb(31, 31, 31) !important;
+  border-color: rgb(31, 31, 31) !important;
+  color: #fff !important;
+}
+
+.ant-select-selection-placeholder {
+  color: #ffffff61 !important; /* or any color you like */
+  opacity: 1 !important; /* override default opacity */
+  font-size: 24px !important;
+}
+
+.ant-select-selection-search-input {
+  font-size: 24px !important;
+}
+
+.ant-modal-content {
+  display: flex !important;
+  align-items: stretch !important;
+  box-sizing: border-box !important;
+  position: relative !important;
+  min-width: 0px !important;
+  flex-direction: column !important;
+  background-color: rgb(19, 19, 19) !important;
+  border-radius: 16px !important;
+  border-width: 1px !important;
+  border-color: rgba(255, 255, 255, 0.12) !important;
+  border-style: solid !important;
+  opacity: 1 !important;
+  margin: 0px !important;
+  box-shadow: rgba(0, 0, 0, 0.4) 0px 3px 6px !important;
+}
+
+.ant-modal-title {
+  background-color: rgb(19, 19, 19) !important;
+  color: #fff !important;
+}
+
+.ant-modal-close-x {
+  color: #fff !important;
+}
