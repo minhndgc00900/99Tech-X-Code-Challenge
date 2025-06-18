@@ -1,11 +1,12 @@
 import { ArrowDownOutlined, DownOutlined } from "@ant-design/icons";
-import "./App.css";
-import { Button, Input } from "antd";
+import { Button, Input, notification } from "antd";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { Controller, useForm, type SubmitHandler } from "react-hook-form";
-import { useState, useMemo, useEffect, useCallback } from "react";
+import "./App.css";
 import ModalComponent from "./components/Modal";
+import { CURRENCY, MOCK_WALLET } from "./data";
 import type { Currency } from "./types/SwapToken";
-import { CURRENCY } from "./data";
+
 
 type Inputs = {
   sell: string;
@@ -122,13 +123,35 @@ function App() {
     if (!data.sell || !fromToken || !toToken) {
       return;
     }
+
+    // Check if user has enough balance
+    const sellAmount = parseFloat(data.sell);
+    const walletBalance = MOCK_WALLET.balance[fromToken.currency as keyof typeof MOCK_WALLET.balance] || 0;
+    
+
+    if (sellAmount > walletBalance) {
+      openNotification('error', 'Error', `Insufficient ${fromToken.currency} balance`);
+      return;
+    }
+
+    // Check if user has enough ETH for network fee
+    if (MOCK_WALLET.network === "ethereum" && fromToken.currency !== "ETH") {
+      const ethBalance = MOCK_WALLET.balance.ETH;
+      if (ethBalance < MOCK_WALLET.networkFee) {
+        openNotification('error',"Error", "Insufficient ETH balance to pay for transaction fees on Ethereum network");
+        return;
+      }
+    }
+
     setIsLoading(true);
     // Simulate API call
     setTimeout(() => {
       setIsLoading(false);
+      openNotification('success', "Transaction successful!", "Transaction successful!");
       console.log("Swap successful:", {
         from: { currency: fromToken.currency, amount: data.sell },
         to: { currency: toToken.currency, amount: exchangeBalance },
+        networkFee: MOCK_WALLET.networkFee,
       });
     }, 1000);
   };
@@ -155,8 +178,21 @@ function App() {
     []
   );
 
+  const [api, contextHolder] = notification.useNotification();
+
+  const openNotification = (type: 'error' | 'success', message: string, description: string) => {
+    api[type]({
+      message,
+      description,
+      placement: 'bottom',
+      pauseOnHover: true,
+      duration: 5,
+    });
+  };
+
   return (
     <div className="container">
+      {contextHolder}
       <div className="w-screen min-h-full max-w-[1200px] flex flex-col items-center flex-1 relative m-auto">
         <form
           onSubmit={handleSubmit(onSubmit)}
@@ -285,6 +321,8 @@ function App() {
             className="submit-btn"
             loading={isLoading}
             disabled={!watch("sell")}
+            htmlType="submit"
+            type="primary"
           >
             Swap
           </Button>

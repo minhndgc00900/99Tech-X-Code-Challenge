@@ -1,4 +1,16 @@
 
+// Mock wallet data
+export const MOCK_WALLET = {
+  balance: {
+    ETH: 0.1, // 0.1 ETH
+    USDT: 1000,
+    USDC: 500,
+    DAI: 200,
+  },
+  network: "ethereum",
+  networkFee: 0.005, // 0.005 ETH for transaction fee
+};
+
 export const USER_WALLET = [
     {
       "currency": "BLUR",
