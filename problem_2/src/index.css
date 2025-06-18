@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
 body {
-  background-color: #000;
+  background-color: #292828;
 }
 
 .container {
@@ -127,6 +127,36 @@ body {
   color: #ff37c7 !important;
   width: 100% !important;
   font-size: 1.6rem !important;
+  border-color: transparent !important;
+}
+
+
+.submit-btn:hover {
+  display: flex !important;
+  flex: 1 1 0px !important;
+  box-sizing: border-box !important;
+  position: relative !important;
+  min-height: 0px !important;
+  min-width: 0px !important;
+  flex-direction: row !important;
+  container-type: normal !important;
+  border-width: 1px !important;
+  align-items: center;
+  justify-content: center;
+  border-color: transparent;
+  cursor: pointer !important;
+  height: auto !important;
+  align-self: stretch !important;
+  background-color: rgba(255, 55, 199, 0.12) !important;
+  padding: 16px 20px !important;
+  border-radius: 20px !important;
+  gap: 12px !important;
+  border-style: solid !important;
+  transform: scale(1) !important;
+  outline-color: rgba(0, 0, 0, 0) !important;
+  color: #ff37c7 !important;
+  width: 100% !important;
+  font-size: 1.6rem !important;
 }
 
 .auto-complete {
@@ -144,6 +174,49 @@ body {
   min-height: 48px;
   margin: 4px 0px;
   padding: 0px 16px;
+  border-color: transparent !important;
+  font-size: 24px !important;
+  color: #fff !important;
+}
+
+.auto-complete:hover {
+  width: 100%;
+  display: flex;
+  flex: 1 1 auto;
+  box-sizing: border-box;
+  position: relative;
+  min-width: 0px;
+  flex-direction: row;
+  align-items: center;
+  background-color: rgb(31, 31, 31);
+  border-radius: 999999px;
+  gap: 8px;
+  min-height: 48px;
+  margin: 4px 0px;
+  padding: 0px 16px;
+  border-color: transparent !important;
+}
+
+.auto-complete:focus-within {
+  width: 100%;
+  display: flex;
+  flex: 1 1 auto;
+  box-sizing: border-box;
+  position: relative;
+  min-width: 0px;
+  flex-direction: row;
+  align-items: center;
+  background-color: rgb(31, 31, 31);
+  border-radius: 999999px;
+  gap: 8px;
+  min-height: 48px;
+  margin: 4px 0px;
+  padding: 0px 16px;
+  border-color: transparent !important;
+}
+
+.ant-input-prefix{
+  color: #ffffff61 !important;
 }
 
 .ant-select-selector {
@@ -177,13 +250,19 @@ body {
   opacity: 1 !important;
   margin: 0px !important;
   box-shadow: rgba(0, 0, 0, 0.4) 0px 3px 6px !important;
+  padding: 20px 0 !important;
 }
 
 .ant-modal-title {
   background-color: rgb(19, 19, 19) !important;
   color: #fff !important;
+  padding: 0 24px !important;
 }
 
 .ant-modal-close-x {
   color: #fff !important;
+}
+
+.ant-modal-header{
+  background-color: rgb(19, 19, 19) !important;
 }
