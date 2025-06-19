@@ -1,54 +1,67 @@
-# React + TypeScript + Vite
+# 🧠 Coding Challenges Repository
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+This repository contains solutions to a series of coding problems. Each problem is housed in its own folder and demonstrates different React or TypeScript techniques — from algorithms to UI design.
 
-Currently, two official plugins are available:
+Below is a preview of the problems, as seen in the project interface:
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+| 📘 Problem List |
+|----------------|
+| 🧮 **Problem 1: Three ways to sum to n** |
+| 🍭 **Problem 2: Fancy Form** |
+| 🤢 **Problem 3: Messy React** |
 
-## Expanding the ESLint configuration
+---
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+## 📂 Problems Overview
 
-```js
-export default tseslint.config({
-  extends: [
-    // Remove ...tseslint.configs.recommended and replace with this
-    ...tseslint.configs.recommendedTypeChecked,
-    // Alternatively, use this for stricter rules
-    ...tseslint.configs.strictTypeChecked,
-    // Optionally, add this for stylistic rules
-    ...tseslint.configs.stylisticTypeChecked,
-  ],
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
-```
+### 🧮 Problem 1: Three ways to sum to n
+A basic algorithm challenge that explores three different approaches to summing numbers from `1` to `n`:
+- Iterative
+- Recursive
+- Mathematical formula
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+Good for benchmarking and performance comparison.
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+---
 
-export default tseslint.config({
-  plugins: {
-    // Add the react-x and react-dom plugins
-    'react-x': reactX,
-    'react-dom': reactDom,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended typescript rules
-    ...reactX.configs['recommended-typescript'].rules,
-    ...reactDom.configs.recommended.rules,
-  },
-})
-```
+### 🍭 Problem 2: Fancy Form
+An interactive, validated form built using a modern frontend stack:
+- ✅ **React**
+- ✅ **TypeScript**
+- ⚡ **Vite**
+- 🎨 **Tailwind CSS**
+- 🧩 **Ant Design**
+
+Includes custom validation messages and polished UI/UX using `react-hook-form`, `yup`, and `antd` notification system.
+
+---
+
+### 🤢 Problem 3: Messy React
+A "worst practices" playground. This intentionally messy React component is designed for:
+- Debugging practice
+- Performance tuning
+- Refactor exercises
+
+---
+
+## 🚀 Getting Started
+
+### 1. Clone the repo
+
+```bash
+git clone https://github.com/minhndgc00900/99Tech-X-Code-Challenge.git
+cd 99Tech-X-Code-Challenge
+
+
+2. Install dependencies
+
+npm install
+
+3. Run a problem (e.g., Problem 2)
+bash
+Copy
+Edit
+
+
+cd problem_2
+npm run dev
