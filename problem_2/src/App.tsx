@@ -1,12 +1,64 @@
 import { ArrowDownOutlined, DownOutlined } from "@ant-design/icons";
+import { yupResolver } from "@hookform/resolvers/yup";
 import { Button, Input, notification } from "antd";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState, type ReactNode } from "react";
 import { Controller, useForm, type SubmitHandler } from "react-hook-form";
+import * as yup from "yup";
 import "./App.css";
 import ModalComponent from "./components/Modal";
 import { CURRENCY, MOCK_WALLET } from "./data";
 import type { Currency } from "./types/SwapToken";
 
+// Add these constants at the top with other constants
+const MIN_AMOUNT = 0.0001;
+const MAX_AMOUNT = 1000000;
+const HIGH_PRICE_IMPACT_THRESHOLD = 5; // 5%
+
+// Validation schema
+const schema = yup.object().shape({
+  sell: yup
+    .string()
+    .test(
+      "min-amount",
+      `Minimum amount is ${MIN_AMOUNT}`,
+      (value: string | undefined) => {
+        if (!value) return true;
+        const num = parseFloat(value);
+        return num === 0 || num >= MIN_AMOUNT;
+      }
+    )
+    .test(
+      "max-amount",
+      `Maximum amount is ${MAX_AMOUNT}`,
+      (value: string | undefined) => {
+        if (!value) return true;
+        const num = parseFloat(value);
+        return num <= MAX_AMOUNT;
+      }
+    ),
+  buy: yup
+    .string()
+    .test(
+      "min-amount",
+      `Minimum amount is ${MIN_AMOUNT}`,
+      (value: string | undefined) => {
+        if (!value) return true;
+        const num = parseFloat(value);
+        return num === 0 || num >= MIN_AMOUNT;
+      }
+    )
+    .test(
+      "max-amount",
+      `Maximum amount is ${MAX_AMOUNT}`,
+      (value: string | undefined) => {
+        if (!value) return true;
+        const num = parseFloat(value);
+        return num <= MAX_AMOUNT;
+      }
+    ),
+  fromToken: yup.object().required("From token is required"),
+  toToken: yup.object().required("To token is required"),
+}) as yup.ObjectSchema<Inputs>;
 
 type Inputs = {
   sell: string;
@@ -16,13 +68,20 @@ type Inputs = {
 };
 
 function App() {
-  const { handleSubmit, control, setValue, watch } = useForm<Inputs>({
+  const {
+    handleSubmit,
+    control,
+    setValue,
+    watch,
+    formState: { errors },
+  } = useForm<Inputs>({
     defaultValues: {
       sell: "",
       buy: "",
       fromToken: CURRENCY[4],
       toToken: CURRENCY[1],
     },
+    resolver: yupResolver(schema),
   });
   const [open, setOpen] = useState<boolean>(false);
   const [active, setActive] = useState<number>(0);
@@ -121,16 +180,27 @@ function App() {
 
   const onSubmit: SubmitHandler<Inputs> = (data) => {
     if (!data.sell || !fromToken || !toToken) {
+      openNotification(
+        "error",
+        "Invalid Input",
+        "Please enter an amount to swap"
+      );
       return;
     }
 
-    // Check if user has enough balance
     const sellAmount = parseFloat(data.sell);
-    const walletBalance = MOCK_WALLET.balance[fromToken.currency as keyof typeof MOCK_WALLET.balance] || 0;
-    
+    const walletBalance =
+      MOCK_WALLET.balance[
+        fromToken.currency as keyof typeof MOCK_WALLET.balance
+      ] || 0;
 
+    // Check if user has enough balance
     if (sellAmount > walletBalance) {
-      openNotification('error', 'Error', `Insufficient ${fromToken.currency} balance`);
+      openNotification(
+        "error",
+        "Insufficient Balance",
+        `You don't have enough ${fromToken.currency} in your wallet. Your balance: ${walletBalance} ${fromToken.currency}`
+      );
       return;
     }
 
@@ -138,20 +208,43 @@ function App() {
     if (MOCK_WALLET.network === "ethereum" && fromToken.currency !== "ETH") {
       const ethBalance = MOCK_WALLET.balance.ETH;
       if (ethBalance < MOCK_WALLET.networkFee) {
-        openNotification('error',"Error", "Insufficient ETH balance to pay for transaction fees on Ethereum network");
+        openNotification(
+          "error",
+          "Insufficient ETH for Network Fee",
+          `You need at least ${MOCK_WALLET.networkFee} ETH to pay for the transaction fee on Ethereum network. Your ETH balance: ${ethBalance} ETH`
+        );
         return;
       }
+    }
+
+    // Check price impact
+    const priceImpact = parseFloat(
+      getPriceImpact(data.sell, fromToken, toToken)
+    );
+    if (priceImpact < -HIGH_PRICE_IMPACT_THRESHOLD) {
+      openNotification(
+        "warning",
+        "High Price Impact",
+        `This swap will have a high price impact of ${Math.abs(
+          priceImpact
+        )}%. Consider splitting your trade into smaller amounts.`
+      );
     }
 
     setIsLoading(true);
     // Simulate API call
     setTimeout(() => {
       setIsLoading(false);
-      openNotification('success', "Transaction successful!", "Transaction successful!");
+      openNotification(
+        "success",
+        "Transaction Successful!",
+        `Successfully swapped ${data.sell} ${fromToken.currency} to ${exchangeBalance} ${toToken.currency}`
+      );
       console.log("Swap successful:", {
         from: { currency: fromToken.currency, amount: data.sell },
         to: { currency: toToken.currency, amount: exchangeBalance },
-        networkFee: MOCK_WALLET.networkFee,
+        networkFee: `${MOCK_WALLET.networkFee} ETH`,
+        priceImpact: `${priceImpact}%`,
       });
     }, 1000);
   };
@@ -180,15 +273,41 @@ function App() {
 
   const [api, contextHolder] = notification.useNotification();
 
-  const openNotification = (type: 'error' | 'success', message: string, description: string) => {
+  const openNotification = (
+    type: "error" | "success" | "warning",
+    message: string,
+    description: ReactNode
+  ) => {
     api[type]({
       message,
       description,
-      placement: 'bottom',
+      placement: "bottom",
       pauseOnHover: true,
       duration: 5,
     });
   };
+  useEffect(() => {
+    const errorMessages = [];
+
+    if (errors.sell?.message) {
+      errorMessages.push(`Sell: ${errors.sell.message}`);
+    }
+    if (errors.buy?.message) {
+      errorMessages.push(`Buy: ${errors.buy.message}`);
+    }
+
+    if (errorMessages.length > 0) {
+      openNotification(
+        "error",
+        "Validation Errors",
+        <div>
+          {errorMessages.map((msg, idx) => (
+            <p key={idx}>{msg}</p> // or <li> if you use <ul>
+          ))}
+        </div>
+      );
+    }
+  }, [errors]);
 
   return (
     <div className="container">
@@ -200,6 +319,9 @@ function App() {
         >
           <div
             className={`input-container ${active === 1 ? "!bg-black" : ""}`}
+            style={{
+              border: errors.sell ? "1px solid red" : "1px solid transparent",
+            }}
             onClick={() => setActive(1)}
           >
             <div className="flex">
@@ -215,43 +337,52 @@ function App() {
                 control={control}
                 name="sell"
                 render={({ field: { value } }) => (
-                  <Input
-                    placeholder="0"
-                    className="!text-white !border-transparent !bg-transparent !text-[30px] !px-6"
-                    value={value}
-                    onChange={(e) => handleSellChange(e.target.value)}
-                  />
+                  <div className="flex flex-col w-full">
+                    <Input
+                      placeholder="0"
+                      className="!text-white !border-transparent !bg-transparent !text-[30px] !px-6"
+                      value={value}
+                      onChange={(e) => handleSellChange(e.target.value)}
+                    />
+                  </div>
                 )}
               />
               <div className="pr-[30px]">
-                <Button
-                  onClick={() => setOpen(true)}
-                  className=""
-                  icon={<DownOutlined />}
-                  iconPosition="end"
-                >
-                  {fromToken?.currency}
-                  {fromToken?.currency && (
-                    <img
-                      src={`/tokens/${fromToken?.currency}.svg`}
-                      alt={fromToken?.currency}
-                      className="w-[32px] h-[32px]"
-                    />
+                <Controller
+                  control={control}
+                  name="fromToken"
+                  render={({ field: { value } }) => (
+                    <Button
+                      onClick={() => setOpen(true)}
+                      className=""
+                      icon={<DownOutlined />}
+                      iconPosition="end"
+                    >
+                      {value?.currency}
+                      {value?.currency && (
+                        <img
+                          src={`/tokens/${value?.currency}.svg`}
+                          alt={value?.currency}
+                          className="w-[32px] h-[32px]"
+                        />
+                      )}
+                    </Button>
                   )}
-                </Button>
+                />
               </div>
             </div>
             <div className="flex justify-between px-6">
               <div className="text-xl text-[14px] !text-[#ffffffa6]">
-                {/* {currentBalance} {fromToken?.currency} */}≈ $
                 {(parseFloat(sellValue) * fromToken.price || 0).toFixed(2)}
               </div>
-              {/* <Button onClick={setMaxValue} type="link" className="!p-0 !m-0 !text-[#ffffffa6]">Max</Button> */}
             </div>
           </div>
           <div
             className={`input-container ${active === 2 ? "!bg-black" : ""}`}
             onClick={() => setActive(2)}
+            style={{
+              border: errors.buy ? "1px solid red" : "1px solid transparent",
+            }}
           >
             <div className="flex">
               <div className="text-xl px-6 text-[16px] !text-[#ffffffa6]">
@@ -263,34 +394,41 @@ function App() {
                 control={control}
                 name="buy"
                 render={({ field: { value } }) => (
-                  <Input
-                    placeholder="0"
-                    className="!text-white !border-transparent !bg-transparent !text-[30px] !px-6"
-                    value={value}
-                    onChange={(e) => handleBuyChange(e.target.value)}
-                  />
+                  <div className="flex flex-col w-full">
+                    <Input
+                      placeholder="0"
+                      className="!text-white !border-transparent !bg-transparent !text-[30px] !px-6"
+                      value={value}
+                      onChange={(e) => handleBuyChange(e.target.value)}
+                    />
+                  </div>
                 )}
               />
               <div className="pr-[30px]">
-                <Button
-                  onClick={() => setOpen(true)}
-                  icon={<DownOutlined />}
-                  iconPosition="end"
-                >
-                  {toToken?.currency || ""}
-                  {toToken?.currency && (
-                    <img
-                      src={`/tokens/${toToken?.currency}.svg`}
-                      alt={toToken?.currency}
-                      className="w-[32px] h-[32px]"
-                    />
+                <Controller
+                  control={control}
+                  name="toToken"
+                  render={({ field: { value } }) => (
+                    <Button
+                      onClick={() => setOpen(true)}
+                      icon={<DownOutlined />}
+                      iconPosition="end"
+                    >
+                      {value?.currency || ""}
+                      {value?.currency && (
+                        <img
+                          src={`/tokens/${value?.currency}.svg`}
+                          alt={value?.currency}
+                          className="w-[32px] h-[32px]"
+                        />
+                      )}
+                    </Button>
                   )}
-                </Button>
+                />
               </div>
             </div>
             <div className="flex">
               <div className="text-xl px-6 text-[14px] !text-[#ffffffa6]">
-                ≈ $
                 {(
                   parseFloat(reverseExchangeBalance as string) *
                     toToken.price || 0
@@ -367,11 +505,6 @@ function App() {
                     <span>
                       {getPriceImpact(sellValue, fromToken, toToken)}%
                     </span>
-                  </div>
-
-                  <div className="flex justify-between">
-                    <span>Max slippage</span>
-                    <span>Auto (0.50%)</span>
                   </div>
                 </div>
               )}
