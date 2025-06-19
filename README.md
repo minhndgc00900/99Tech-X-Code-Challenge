@@ -51,17 +51,16 @@ A "worst practices" playground. This intentionally messy React component is desi
 ```bash
 git clone https://github.com/minhndgc00900/99Tech-X-Code-Challenge.git
 cd 99Tech-X-Code-Challenge
-
+```
 
 2. Install dependencies
-
+```bash
 npm install
+```
 
-3. Run a problem (e.g., Problem 2)
-bash
-Copy
-Edit
-
+3. Run problem 2
+```bash
 
 cd problem_2
 npm run dev
+```
